@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.sky.java.homeworks.course2.homework5.data.Employee;
 import pro.sky.java.homeworks.course2.homework5.service.EmployeeService;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -31,5 +33,10 @@ public class EmployeeController {
     @GetMapping("/find")
     public Employee find(@RequestParam("firstname") String firstName, @RequestParam("lastname") String lastName) {
         return employeeService.find(firstName, lastName);
+    }
+
+    @GetMapping("/printlist")
+    public Set<Employee> print() {
+        return employeeService.printEmployeeList();
     }
 }

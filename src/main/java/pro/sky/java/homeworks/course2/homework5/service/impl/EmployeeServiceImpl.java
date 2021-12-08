@@ -2,48 +2,49 @@ package pro.sky.java.homeworks.course2.homework5.service.impl;
 
 import org.springframework.stereotype.Service;
 import pro.sky.java.homeworks.course2.homework5.data.Employee;
-import pro.sky.java.homeworks.course2.homework5.exceptions.EmployeeBookOverflow;
+import pro.sky.java.homeworks.course2.homework5.exceptions.EmployeeAlreadyExists;
 import pro.sky.java.homeworks.course2.homework5.exceptions.EmployeeNotFound;
 import pro.sky.java.homeworks.course2.homework5.service.EmployeeService;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final Employee[] employees = new Employee[10];
+    Set employees = new HashSet<>();
 
     @Override
     public Employee addNew(String firstName, String lastName) {
         Employee newbie = new Employee(firstName, lastName);
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] == null) {
-                employees[i] = newbie;
-                return newbie;
-            }
+        if (employees.contains(newbie)) {
+            throw new EmployeeAlreadyExists();
         }
-        throw new EmployeeBookOverflow();
+        employees.add(newbie);
+        return newbie;
     }
 
     @Override
     public Employee remove(String firstName, String lastName) {
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] == null) {
-                throw new EmployeeNotFound();
-            } else if (employees[i].getFirstName().equals(firstName) && employees[i].getLastName().equals(lastName)) {
-                employees[i] = null;
-                return employees[i];
-            }
+        Employee removed = new Employee(firstName, lastName);
+        if (!employees.contains(removed)) {
+            throw new EmployeeNotFound();
+        }
+        employees.remove(removed);
+        return removed;
+    }
+
+    @Override
+    public Employee find(String firstName, String lastName) {
+        Employee find = new Employee(firstName, lastName);
+        if (employees.contains(find)) {
+            return find;
         }
         throw new EmployeeNotFound();
     }
 
     @Override
-    public Employee find(String firstName, String lastName) {
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null && employees[i].getFirstName().equals(firstName) && employees[i].getLastName().equals(lastName)) {
-                return employees[i];
-            }
-        }
-        throw new EmployeeNotFound();
+    public Set<Employee> printEmployeeList() {
+        return employees;
     }
-
 }
